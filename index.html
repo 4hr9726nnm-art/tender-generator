@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TenderAI — Professional Tender Generator | Evans Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink:     #0d0f14;
+  --paper:   #f7f4ee;
+  --cream:   #ede8df;
+  --rule:    #d4ccbc;
+  --gold:    #c9933a;
+  --gold2:   #e8b04a;
+  --rust:    #8b3a1e;
+  --sage:    #3d5a47;
+  --steel:   #2c3e50;
+  --muted:   #7a6f62;
+  --surface: #ffffff;
+  --shadow:  rgba(13,15,20,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{
+  height:auto;
+  /* No scrollbar on html — let Wix iFrame expand to full content height */
+  overflow:visible;
+  overflow-x:hidden;
+  max-width:100%;
+}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  /* No overflow:auto/scroll — prevents second scrollbar inside Wix */
+  overflow:visible;
+  overflow-x:hidden;
+  touch-action:pan-y;
+  -webkit-overflow-scrolling:touch;
+  position:relative;
+  width:100%;
+  max-width:100%;
+}
+
+/* ── GRID TEXTURE ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(var(--rule) 1px,transparent 1px),
+    linear-gradient(90deg,var(--rule) 1px,transparent 1px);
+  background-size:40px 40px;
+  opacity:0.3;
+  pointer-events:none;touch-action:none;z-index:0;
+}
+
+.wrap{max-width:920px;margin:0 auto;padding:0 24px;position:relative;z-index:1;width:100%;overflow-x:hidden;}
+
+/* ── HEADER ── */
+header{
+  padding:28px 0 20px;
+  border-bottom:2px solid var(--ink);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.brand{display:flex;align-items:baseline;gap:10px;}
+.brand-name{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:900;
+  color:var(--ink);letter-spacing:-0.5px;
+}
+.brand-name span{color:var(--gold);}
+.brand-tag{
+  font-family:'Fira Code',monospace;
+  font-size:10px;color:var(--muted);
+  border:1px solid var(--rule);
+  padding:2px 8px;border-radius:2px;
+  text-transform:uppercase;letter-spacing:1px;
+}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.token-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--ink);color:var(--paper);
+  border-radius:2px;padding:6px 14px;
+}
+.tp-label{font-family:'Fira Code',monospace;font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;}
+.tp-count{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold2);line-height:1;}
+.tp-unit{font-size:10px;opacity:0.6;}
+.buy-btn{
+  background:var(--gold);color:#fff;
+  border:none;border-radius:2px;
+  padding:7px 16px;font-size:11px;font-family:'Fira Code',monospace;
+  cursor:pointer;letter-spacing:0.5px;text-transform:uppercase;
+  transition:background 0.15s;
+}
+.buy-btn:hover{background:var(--rust);}
+
+/* ── HERO ── */
+.hero{padding:52px 0 40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;}
+.hero-left h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,6vw,58px);
+  font-weight:900;line-height:1.05;
+  color:var(--ink);margin-bottom:16px;
+}
+.hero-left h1 em{
+  font-style:normal;color:var(--gold);
+  display:block;
+}
+.hero-left p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;}
+.badge{
+  font-family:'Fira Code',monospace;font-size:10px;
+  padding:4px 10px;border-radius:2px;
+  border:1px solid;letter-spacing:0.5px;text-transform:uppercase;
+}
+.badge-green{border-color:var(--sage);color:var(--sage);background:rgba(61,90,71,0.06);}
+.badge-gold{border-color:var(--gold);color:var(--gold);background:rgba(201,147,58,0.08);}
+.badge-ink{border-color:var(--ink);color:var(--ink);background:transparent;}
+
+.hero-right{
+  background:var(--ink);
+  border-radius:4px;padding:28px;
+  position:relative;overflow:hidden;
+}
+.hero-right::before{
+  content:'TENDER\ADOC';
+  white-space:pre;
+  font-family:'Playfair Display',serif;
+  font-size:80px;font-weight:900;line-height:0.9;
+  color:rgba(255,255,255,0.03);
+  position:absolute;top:-10px;right:-10px;
+  pointer-events:none;
+}
+.doc-preview{display:flex;flex-direction:column;gap:8px;}
+.doc-line{height:6px;border-radius:1px;background:rgba(255,255,255,0.12);}
+.doc-line.title{height:14px;background:var(--gold);opacity:0.7;width:60%;}
+.doc-line.sub{width:40%;background:rgba(255,255,255,0.2);}
+.doc-line.w100{width:100%;}
+.doc-line.w80{width:80%;}
+.doc-line.w90{width:90%;}
+.doc-line.w60{width:60%;}
+.doc-line.w40{width:40%;}
+.doc-section{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);}
+.doc-section-label{
+  font-family:'Fira Code',monospace;font-size:9px;
+  color:var(--gold2);text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:8px;
+}
+
+/* ── FORM ── */
+.form-wrap{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-top:3px solid var(--gold);
+  border-radius:4px;
+  padding:36px;
+  margin-bottom:28px;
+  box-shadow:0 4px 32px var(--shadow);
+}
+.form-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;
+  color:var(--ink);margin-bottom:6px;
+}
+.form-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.5;}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.span2{grid-column:1/-1;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{
+  font-family:'Fira Code',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--muted);
+}
+.field input,.field select,.field textarea{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:2px;
+  padding:11px 14px;
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;
+  color:var(--ink);outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(201,147,58,0.12);
+}
+.field select option{background:#fff;}
+.field textarea{resize:vertical;min-height:100px;line-height:1.6;}
+
+/* CHIPS */
+.chips-label{
+  font-family:'Fira Code',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--muted);margin-bottom:8px;display:block;
+}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+.chip{
+  padding:6px 14px;border-radius:2px;
+  border:1px solid var(--rule);
+  font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all 0.15s;color:var(--muted);
+  user-select:none;position:relative;z-index:2;pointer-events:auto;
+}
+.chip:hover{border-color:var(--gold);color:var(--ink);}
+.chip.active{background:var(--gold);border-color:var(--gold);color:#fff;}
+
+/* SECTIONS CHECKBOXES */
+.sections-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;margin-bottom:18px;
+}
+.section-check{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:12px;cursor:pointer;
+  transition:all 0.15s;user-select:none;
+  position:relative;z-index:2;pointer-events:auto;
+}
+.section-check:hover{border-color:var(--gold);}
+.section-check.active{border-color:var(--gold);background:rgba(201,147,58,0.06);}
+.sc-box{
+  width:16px;height:16px;border:1.5px solid var(--rule);
+  border-radius:2px;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.section-check.active .sc-box{background:var(--gold);border-color:var(--gold);}
+.sc-check{font-size:10px;color:#fff;display:none;}
+.section-check.active .sc-check{display:block;}
+.sc-text{font-size:12px;font-weight:500;color:var(--ink);line-height:1.4;}
+.sc-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* DIVIDER */
+.form-divider{
+  height:1px;background:var(--rule);
+  margin:24px 0;position:relative;
+}
+.form-divider::before{
+  content:attr(data-label);
+  position:absolute;top:-9px;left:20px;
+  background:var(--surface);padding:0 10px;
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--muted);letter-spacing:1px;text-transform:uppercase;
+}
+
+/* GENERATE BUTTON */
+.free-trial-notice{
+  display:flex;align-items:flex-start;gap:10px;
+  background:rgba(201,147,58,0.07);
+  border:1px solid rgba(201,147,58,0.25);
+  border-left:3px solid var(--gold);
+  border-radius:2px;padding:12px 16px;
+  margin-bottom:14px;
+}
+.ftn-icon{ font-size:16px;flex-shrink:0;line-height:1.6; }
+.ftn-text{ font-size:12px;color:var(--muted);line-height:1.6; }
+.ftn-text strong{ color:var(--ink); }
+.ftn-upgrade{
+  color:var(--gold);font-weight:600;cursor:pointer;
+  text-decoration:underline;text-underline-offset:2px;
+}
+.ftn-upgrade:hover{ color:var(--rust); }
+
+.gen-btn{
+  width:100%;padding:18px;
+  background:var(--ink);
+  border:none;border-radius:2px;
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;
+  color:var(--gold2);
+  cursor:pointer;transition:all 0.2s;
+  letter-spacing:0.5px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  margin-top:8px;
+}
+.gen-btn:hover{background:var(--steel);transform:translateY(-1px);box-shadow:0 6px 24px rgba(13,15,20,0.2);}
+.gen-btn:active{transform:translateY(0);}
+.gen-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* ── LOADING ── */
+.loading{
+  display:none;text-align:center;padding:56px;
+  background:var(--surface);border:1px solid var(--rule);
+  border-radius:4px;margin-bottom:28px;
+}
+.loading.show{display:block;animation:fadeUp 0.3s ease;}
+.loading-doc{
+  display:inline-flex;flex-direction:column;gap:6px;
+  margin-bottom:20px;width:200px;
+}
+.ld-line{
+  height:8px;border-radius:1px;background:var(--cream);
+  position:relative;overflow:hidden;
+}
+.ld-line::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,var(--gold2),transparent);
+  animation:shimmer 1.4s ease infinite;
+}
+@keyframes shimmer{from{transform:translateX(-100%);}to{transform:translateX(100%);}}
+.ld-line:nth-child(1){width:60%;}
+.ld-line:nth-child(2){width:100%;}
+.ld-line:nth-child(3){width:85%;}
+.ld-line:nth-child(4){width:100%;}
+.ld-line:nth-child(5){width:70%;}
+.loading p{
+  font-family:'Fira Code',monospace;font-size:12px;
+  color:var(--muted);letter-spacing:1px;text-transform:uppercase;
+}
+
+/* ── RESULTS ── */
+#results{display:none;animation:fadeUp 0.4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.results-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;flex-wrap:wrap;gap:12px;
+}
+.results-hdr h2{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:900;color:var(--ink);
+}
+.gen-badge{
+  font-family:'Fira Code',monospace;font-size:10px;
+  padding:4px 12px;border-radius:2px;
+  background:var(--sage);color:#fff;letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+/* META STRIP */
+.meta-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:12px;margin-bottom:20px;
+}
+.meta-card{
+  background:var(--surface);border:1px solid var(--rule);
+  border-radius:2px;padding:14px 16px;
+}
+.mc-label{
+  font-family:'Fira Code',monospace;font-size:9px;
+  text-transform:uppercase;letter-spacing:1px;
+  color:var(--muted);margin-bottom:5px;
+}
+.mc-val{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:700;color:var(--ink);
+  line-height:1.2;
+}
+.mc-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* DOCUMENT SECTIONS */
+.doc-section-wrap{
+  background:var(--surface);border:1px solid var(--rule);
+  border-radius:4px;overflow:hidden;margin-bottom:16px;
+  box-shadow:0 2px 16px var(--shadow);
+}
+.doc-sec-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--rule);
+  cursor:pointer;user-select:none;transition:background 0.15s;
+  background:var(--paper);
+}
+.doc-sec-header:hover{background:var(--cream);}
+.doc-sec-left{display:flex;align-items:center;gap:12px;}
+.doc-sec-num{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:900;color:var(--gold);
+  min-width:28px;
+}
+.doc-sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-weight:700;color:var(--ink);
+}
+.doc-sec-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.doc-sec-toggle{
+  font-size:12px;color:var(--muted);
+  transition:transform 0.2s;font-family:'Fira Code',monospace;
+}
+.doc-section-wrap.open .doc-sec-toggle{transform:rotate(180deg);}
+.doc-sec-body{
+  display:none;padding:24px 28px;
+  line-height:1.8;font-size:14px;color:var(--ink);
+}
+.doc-section-wrap.open .doc-sec-body{
+  display:block;animation:fadeUp 0.2s ease;
+}
+.doc-sec-body h3{
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-weight:700;color:var(--ink);
+  margin:18px 0 8px;border-bottom:1px solid var(--rule);
+  padding-bottom:6px;
+}
+.doc-sec-body h3:first-child{margin-top:0;}
+.doc-sec-body p{margin-bottom:12px;color:var(--steel);}
+.doc-sec-body ul,.doc-sec-body ol{
+  padding-left:20px;margin-bottom:12px;color:var(--steel);
+}
+.doc-sec-body li{margin-bottom:6px;}
+.doc-sec-body table{
+  width:100%;border-collapse:collapse;
+  margin-bottom:16px;font-size:13px;
+}
+.doc-sec-body table th{
+  background:var(--ink);color:var(--paper);
+  padding:10px 14px;text-align:left;
+  font-family:'Fira Code',monospace;font-size:11px;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.doc-sec-body table td{
+  padding:10px 14px;border-bottom:1px solid var(--rule);
+  vertical-align:top;
+}
+.doc-sec-body table tr:nth-child(even) td{background:var(--paper);}
+.doc-sec-body table tr:hover td{background:var(--cream);}
+.clause-num{
+  font-family:'Fira Code',monospace;font-size:11px;
+  color:var(--gold);font-weight:500;margin-right:6px;
+}
+.important-box{
+  background:rgba(201,147,58,0.08);
+  border:1px solid rgba(201,147,58,0.3);
+  border-left:3px solid var(--gold);
+  border-radius:2px;padding:12px 16px;
+  margin:12px 0;font-size:13px;color:var(--steel);
+}
+.important-box strong{color:var(--gold);font-family:'Fira Code',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:4px;}
+
+/* ACTIONS BAR */
+.actions-bar{
+  display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;
+}
+.act-btn{
+  padding:12px 24px;border-radius:2px;
+  font-family:'Fira Code',monospace;font-size:11px;
+  font-weight:500;cursor:pointer;transition:all 0.15s;
+  text-transform:uppercase;letter-spacing:0.5px;border:none;
+}
+.act-primary{background:var(--ink);color:var(--gold2);}
+.act-primary:hover{background:var(--steel);}
+.act-secondary{background:transparent;border:1px solid var(--rule);color:var(--muted);}
+.act-secondary:hover{border-color:var(--gold);color:var(--gold);}
+
+/* EXPAND ALL */
+.expand-all-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.expand-all-bar span{
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--muted);text-transform:uppercase;letter-spacing:1px;
+}
+.expand-all-btn{
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--gold);background:none;
+  border:1px solid rgba(201,147,58,0.3);
+  border-radius:2px;padding:4px 12px;cursor:pointer;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:all 0.15s;
+}
+.expand-all-btn:hover{background:rgba(201,147,58,0.08);}
+
+/* ── PAYWALL MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(13,15,20,0.88);
+  backdrop-filter:blur(8px);
+  align-items:flex-start;justify-content:center;
+  padding:20px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;touch-action:pan-y;
+}
+.modal-overlay.show{display:flex;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-top:3px solid var(--gold);
+  border-radius:4px;
+  max-width:520px;width:100%;
+  padding:36px 32px;
+  position:relative;
+  animation:slideUp 0.25s ease;
+  margin:auto 0;overflow:visible;
+}
+@keyframes slideUp{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-close{
+  position:absolute;top:14px;right:16px;
+  background:none;border:none;
+  font-size:20px;cursor:pointer;color:var(--muted);
+}
+.modal-close:hover{color:var(--ink);}
+.modal h2{
+  font-family:'Playfair Display',serif;
+  font-size:26px;font-weight:900;color:var(--ink);
+  margin-bottom:6px;
+}
+.modal-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:24px;}
+.modal-sub strong{color:var(--ink);}
+
+.bundles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.bundle{
+  background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:18px 12px;text-align:center;
+  cursor:pointer;transition:all 0.15s;position:relative;
+}
+.bundle:hover{border-color:var(--gold);}
+.bundle.selected{border-color:var(--gold);background:rgba(201,147,58,0.06);}
+.b-badge{
+  position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  background:var(--gold);color:#fff;
+  font-family:'Fira Code',monospace;font-size:9px;
+  padding:2px 10px;border-radius:2px;white-space:nowrap;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.b-name{
+  font-family:'Fira Code',monospace;font-size:11px;
+  text-transform:uppercase;letter-spacing:1px;
+  color:var(--muted);margin-bottom:6px;
+}
+.b-tokens{
+  font-family:'Playfair Display',serif;
+  font-size:36px;font-weight:900;color:var(--gold);line-height:1;
+}
+.b-unit{font-size:10px;color:var(--muted);margin-bottom:8px;}
+.b-price{
+  font-family:'Fira Code',monospace;font-size:18px;
+  color:var(--ink);font-weight:500;
+}
+.b-per{font-size:10px;color:var(--muted);margin-top:2px;}
+
+.pay-btn{
+  width:100%;padding:14px;background:var(--ink);
+  border:none;border-radius:2px;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;
+  color:var(--gold2);cursor:pointer;
+  transition:background 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-bottom:10px;
+}
+.pay-btn:hover{background:var(--steel);}
+
+.di-cards{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.di-card{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:10px 12px;
+}
+.di-icon{font-size:16px;flex-shrink:0;line-height:1.5;}
+.di-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.di-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+
+.redeem-sec{margin-top:18px;border-top:1px solid var(--rule);padding-top:16px;}
+.redeem-sec p{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.redeem-row{display:flex;gap:8px;}
+.redeem-row input{
+  flex:1;background:var(--paper);border:1px solid var(--rule);
+  border-radius:2px;padding:10px 12px;
+  font-family:'Fira Code',monospace;font-size:12px;
+  color:var(--ink);outline:none;text-transform:uppercase;letter-spacing:1px;
+}
+.redeem-row input:focus{border-color:var(--gold);}
+.redeem-btn{
+  background:var(--paper);border:1px solid var(--rule);
+  color:var(--ink);padding:10px 16px;border-radius:2px;
+  cursor:pointer;font-family:'Fira Code',monospace;font-size:11px;
+  white-space:nowrap;transition:all 0.15s;text-transform:uppercase;
+}
+.redeem-btn:hover{border-color:var(--gold);color:var(--gold);}
+.redeem-msg{font-size:11px;margin-top:8px;font-family:'Fira Code',monospace;}
+
+footer{
+  padding:28px 0;text-align:center;
+  color:var(--muted);font-size:11px;
+  border-top:1px solid var(--rule);margin-top:48px;
+  font-family:'Fira Code',monospace;line-height:1.9;
+  letter-spacing:0.3px;
+}
+
+/* ── LOADING PROGRESS ── */
+.loading{ text-align:left; }
+.loading-header{ display:flex; gap:24px; align-items:flex-start; margin-bottom:20px; }
+.loading-meta{ flex:1; }
+.loading-title{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;color:var(--ink);
+  margin-bottom:6px;
+}
+#loading-msg{
+  font-family:'Fira Code',monospace;font-size:12px;
+  color:var(--gold);letter-spacing:0.5px;margin-bottom:12px;
+  text-transform:uppercase;
+}
+.loading-progress-wrap{
+  height:4px;background:var(--cream);
+  border-radius:2px;overflow:hidden;margin-bottom:6px;
+}
+.loading-progress-bar{
+  height:100%;background:var(--gold);
+  border-radius:2px;width:0%;
+  transition:width 0.5s ease;
+}
+.loading-pct{
+  font-family:'Fira Code',monospace;font-size:11px;
+  color:var(--muted);
+}
+.section-progress{ display:flex;flex-direction:column;gap:8px; }
+.sp-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  background:var(--cream);border-radius:2px;
+  border-left:3px solid var(--rule);
+  transition:all 0.3s ease;
+}
+.sp-item.active{
+  background:rgba(201,147,58,0.08);
+  border-left-color:var(--gold);
+}
+.sp-item.done{
+  background:rgba(61,90,71,0.06);
+  border-left-color:var(--sage);
+}
+.sp-icon{ font-size:14px; width:20px; text-align:center; flex-shrink:0; }
+.sp-name{ font-family:'Outfit',sans-serif; font-size:13px; font-weight:500; color:var(--ink); flex:1; }
+.sp-status{
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;
+  white-space:nowrap;
+}
+.sp-status.active-status{ color:var(--gold); }
+.sp-status.done-status{ color:var(--sage); }
+
+/* ── QUALITY BANNER ── */
+.quality-banner{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(61,90,71,0.06);
+  border:1px solid rgba(61,90,71,0.2);
+  border-left:3px solid var(--sage);
+  border-radius:2px;padding:14px 18px;
+  margin-bottom:18px;
+}
+.qb-icon{ font-size:22px; flex-shrink:0; }
+.qb-title{ font-size:13px;font-weight:600;color:var(--sage);margin-bottom:2px; }
+.qb-sub{ font-size:12px;color:var(--muted); }
+
+/* ── SECTION SHIMMER PLACEHOLDER ── */
+.section-shimmer{ padding:8px 0; }
+.sh-line{
+  height:10px;border-radius:1px;
+  background:var(--cream);margin-bottom:10px;
+  position:relative;overflow:hidden;width:100%;
+}
+.sh-line.w80{ width:80%; }
+.sh-line.w90{ width:90%; }
+.sh-line.w70{ width:70%; }
+.sh-line::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(201,147,58,0.15),transparent);
+  animation:shimmer 1.4s ease infinite;
+}
+
+/* ══════════════════════════════════════════════
+   MOBILE — comprehensive fixes for iPhone/Android
+   ══════════════════════════════════════════════ */
+@media(max-width:700px){
+
+  /* ── LAYOUT ── */
+  .wrap{ padding:0 14px; }
+
+  /* ── HEADER ── */
+  header{
+    padding:14px 0 12px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .brand{ gap:8px; }
+  .brand-name{ font-size:18px; }
+  .brand-tag{ font-size:9px; padding:2px 6px; }
+  .hdr-right{ width:100%; justify-content:space-between; }
+  .token-pill{ padding:5px 12px; }
+  .tp-count{ font-size:18px; }
+  .buy-btn{ padding:6px 14px; font-size:10px; }
+
+  /* ── HERO ── */
+  .hero{
+    grid-template-columns:1fr;
+    padding:28px 0 20px;
+    gap:16px;
+  }
+  .hero-right{ display:none; }
+  .hero-left h1{ font-size:clamp(28px,8vw,40px); }
+  .hero-left p{ font-size:13px; }
+  .badge{ font-size:9px; padding:3px 8px; }
+
+  /* ── FORM ── */
+  .form-wrap{ padding:20px 16px; }
+  .form-title{ font-size:18px; }
+  .form-sub{ font-size:12px; margin-bottom:20px; }
+  .form-grid{ grid-template-columns:1fr; gap:14px; }
+  .span2{ grid-column:1; }
+
+  /* Make all inputs/selects full width and large enough to tap */
+  .field input,
+  .field select,
+  .field textarea{
+    font-size:16px; /* prevents iOS zoom on focus */
+    padding:13px 14px;
+    width:100%;
+    max-width:100%;
+    -webkit-appearance:none;
+    appearance:none;
+    border-radius:4px;
+  }
+  .field select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a6f62' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 14px center;
+    padding-right:36px;
+  }
+  .field label{ font-size:9px; letter-spacing:1px; }
+  .field textarea{ min-height:90px; }
+
+  /* ── CHIPS ── */
+  .chips{ gap:6px; }
+  .chip{
+    font-size:11px;
+    padding:7px 12px;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    min-height:36px;
+    display:flex;align-items:center;
+  }
+  .chips-label{ font-size:9px; }
+
+  /* ── SECTIONS CHECKBOXES ── */
+  .sections-grid{ grid-template-columns:1fr; gap:8px; }
+  .section-check{
+    padding:12px;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    min-height:52px;
+  }
+  .sc-text{ font-size:13px; }
+  .sc-sub{ font-size:10px; }
+
+  /* ── FORM DIVIDER ── */
+  .form-divider{ margin:18px 0; }
+
+  /* ── GENERATE BUTTON ── */
+  .gen-btn{
+    padding:16px;
+    font-size:16px;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ── LOADING ── */
+  .loading{ padding:36px 20px; }
+
+  /* ── RESULTS META ── */
+  .meta-strip{ grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  .mc-val{ font-size:14px; }
+  .mc-label{ font-size:8px; }
+
+  /* ── DOCUMENT SECTIONS ── */
+  .doc-sec-header{ padding:14px 14px; }
+  .doc-sec-num{ font-size:16px; min-width:22px; }
+  .doc-sec-title{ font-size:14px; }
+  .doc-sec-body{ padding:18px 16px; font-size:13px; }
+
+  /* Tables in results — allow horizontal scroll */
+  .doc-sec-body table{
+    display:block;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    white-space:nowrap;
+    font-size:11px;
+  }
+  .doc-sec-body table th,
+  .doc-sec-body table td{
+    padding:8px 10px;
+    white-space:nowrap;
+  }
+
+  /* ── ACTIONS BAR ── */
+  .actions-bar{ flex-direction:column; gap:8px; }
+  .act-btn{ width:100%; text-align:center; padding:14px; font-size:11px; }
+
+  /* ── EXPAND BAR ── */
+  .expand-all-bar{ margin-bottom:10px; }
+  .expand-all-bar span{ font-size:9px; }
+
+  /* ── FOOTER ── */
+  footer{ font-size:10px; padding:20px 0; }
+}
+
+/* ── MODAL — full mobile scroll fix ── */
+.modal-overlay{
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  overflow-y:auto;
+  align-items:flex-start;
+  padding:16px;
+}
+@media(max-width:700px){
+  .modal{
+    padding:22px 16px;
+    border-radius:6px;
+    width:100%;
+    max-width:100%;
+    margin:8px auto;
+    overflow:visible;
+  }
+  .modal h2{ font-size:22px; }
+  .modal-sub{ font-size:12px; margin-bottom:18px; }
+  .bundles{ grid-template-columns:1fr; gap:10px; margin-bottom:16px; }
+  .bundle{ padding:16px 12px; }
+  .b-tokens{ font-size:32px; }
+  .b-price{ font-size:16px; }
+  .pay-btn{
+    padding:14px;font-size:14px;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .redeem-row{ flex-direction:column; gap:8px; }
+  .redeem-row input{
+    width:100%;
+    font-size:14px;
+    padding:12px 14px;
+    -webkit-appearance:none;
+    border-radius:4px;
+  }
+  .redeem-btn{ width:100%; padding:12px; font-size:11px; }
+  .di-card{ padding:10px; }
+  .di-title{ font-size:11px; }
+  .di-desc{ font-size:10px; }
+}
+
+@media(max-width:380px){
+  .sections-grid{ grid-template-columns:1fr; }
+  .meta-strip{ grid-template-columns:1fr; }
+  .hero-left h1{ font-size:26px; }
+  .wrap{ padding:0 10px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-name">Tender<span>AI</span></div>
+      <div class="brand-tag">by Evans Engineering</div>
+    </div>
+    <div class="hdr-right">
+      <div class="token-pill">
+        <span class="tp-label">Tenders</span>
+        <span class="tp-count" id="token-display">2</span>
+        <span class="tp-unit" id="token-unit-label">left (3 sections each)</span>
+      </div>
+      <button class="buy-btn" onclick="openPaywall()">+ Buy More</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <h1>Professional Tender Packages<em>in 60 seconds.</em></h1>
+      <p>Generate a complete, region-specific tender document — scope of work, BOQ template, contract conditions, payment schedule and evaluation criteria — for any construction project, anywhere in the world.</p>
+      <div class="hero-badges">
+        <span class="badge badge-green">✦ 2 Free Tenders · 3 sections each</span>
+        <span class="badge badge-gold">Global Coverage</span>
+        <span class="badge badge-ink">No Sign-Up</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="doc-preview">
+        <div class="doc-line title"></div>
+        <div class="doc-line sub"></div>
+        <div class="doc-section">
+          <div class="doc-section-label">01 — Scope of Work</div>
+          <div class="doc-line w100"></div>
+          <div class="doc-line w80"></div>
+          <div class="doc-line w90"></div>
+        </div>
+        <div class="doc-section">
+          <div class="doc-section-label">02 — Bill of Quantities</div>
+          <div class="doc-line w100"></div>
+          <div class="doc-line w60"></div>
+          <div class="doc-line w80"></div>
+          <div class="doc-line w40"></div>
+        </div>
+        <div class="doc-section">
+          <div class="doc-section-label">03 — Contract Conditions</div>
+          <div class="doc-line w90"></div>
+          <div class="doc-line w100"></div>
+          <div class="doc-line w70"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-wrap">
+    <div class="form-title">Project Information</div>
+    <div class="form-sub">Fill in your project details. The more specific you are, the more accurate and locally relevant your tender package will be.</div>
+
+    <div class="form-grid">
+
+      <!-- Project Title -->
+      <div class="field span2">
+        <label>Project Title / Name</label>
+        <input type="text" id="proj-title" placeholder="e.g. Construction of Proposed 6-Storey Office Block — Westlands, Nairobi"/>
+      </div>
+
+      <!-- Project Type -->
+      <div class="field">
+        <label>Project Type</label>
+        <select id="proj-type">
+          <option value="">Select type...</option>
+          <optgroup label="Building Works">
+            <option>Residential — Single Dwelling</option>
+            <option>Residential — Multi-Unit Development</option>
+            <option>Commercial Office Building</option>
+            <option>Retail / Shopping Centre</option>
+            <option>Industrial / Warehouse</option>
+            <option>Mixed-Use Development</option>
+            <option>Hospitality — Hotel / Resort</option>
+            <option>Healthcare — Hospital / Clinic</option>
+            <option>Education — School / University</option>
+            <option>Religious / Community Building</option>
+          </optgroup>
+          <optgroup label="Civil & Infrastructure">
+            <option>Road Construction / Rehabilitation</option>
+            <option>Bridge Construction</option>
+            <option>Water Supply & Reticulation</option>
+            <option>Sewerage & Drainage</option>
+            <option>Dam / Reservoir Construction</option>
+            <option>Airport / Airstrip Works</option>
+            <option>Port / Marine Works</option>
+          </optgroup>
+          <optgroup label="Specialist Works">
+            <option>Fit-Out & Refurbishment</option>
+            <option>MEP Installation Only</option>
+            <option>Landscaping & External Works</option>
+            <option>Demolition Works</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Contract Type -->
+      <div class="field">
+        <label>Contract Type</label>
+        <select id="contract-type">
+          <option value="">Select contract type...</option>
+          <option>Lump Sum Fixed Price</option>
+          <option>Bill of Quantities (Re-measurable)</option>
+          <option>Design & Build</option>
+          <option>Cost Plus / Prime Cost</option>
+          <option>Management Contract</option>
+          <option>Framework Agreement</option>
+          <option>Minor Works</option>
+        </select>
+      </div>
+
+      <!-- Region -->
+      <div class="field">
+        <label>Region / Country</label>
+        <select id="region">
+          <option value="">Select region...</option>
+          <optgroup label="East Africa">
+            <option>Kenya</option><option>Tanzania</option><option>Uganda</option>
+            <option>Rwanda</option><option>Ethiopia</option><option>Djibouti</option>
+          </optgroup>
+          <optgroup label="West Africa">
+            <option>Nigeria</option><option>Ghana</option><option>Senegal</option>
+            <option>Ivory Coast</option><option>Cameroon</option>
+          </optgroup>
+          <optgroup label="Southern Africa">
+            <option>South Africa</option><option>Zimbabwe</option>
+            <option>Zambia</option><option>Mozambique</option><option>Botswana</option>
+          </optgroup>
+          <optgroup label="North Africa">
+            <option>Egypt</option><option>Morocco</option><option>Tunisia</option><option>Algeria</option>
+          </optgroup>
+          <optgroup label="Middle East">
+            <option>UAE</option><option>Saudi Arabia</option><option>Qatar</option>
+            <option>Kuwait</option><option>Bahrain</option><option>Oman</option>
+            <option>Jordan</option>
+          </optgroup>
+          <optgroup label="Europe">
+            <option>United Kingdom</option><option>Germany</option><option>France</option>
+            <option>Spain</option><option>Netherlands</option><option>Poland</option>
+            <option>Sweden</option><option>Norway</option><option>Ireland</option>
+          </optgroup>
+          <optgroup label="North America">
+            <option>United States</option><option>Canada</option><option>Mexico</option>
+          </optgroup>
+          <optgroup label="South America">
+            <option>Brazil</option><option>Colombia</option><option>Chile</option><option>Argentina</option>
+          </optgroup>
+          <optgroup label="Asia Pacific">
+            <option>Australia</option><option>New Zealand</option><option>Singapore</option>
+            <option>India</option><option>China</option><option>Japan</option>
+            <option>Indonesia</option><option>Vietnam</option><option>Philippines</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Currency -->
+      <div class="field">
+        <label>Tender Currency</label>
+        <select id="currency">
+          <option value="USD">USD — US Dollar</option>
+          <option value="KES">KES — Kenyan Shilling</option>
+          <option value="NGN">NGN — Nigerian Naira</option>
+          <option value="ZAR">ZAR — South African Rand</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — British Pound</option>
+          <option value="AED">AED — UAE Dirham</option>
+          <option value="SAR">SAR — Saudi Riyal</option>
+          <option value="INR">INR — Indian Rupee</option>
+          <option value="AUD">AUD — Australian Dollar</option>
+          <option value="CAD">CAD — Canadian Dollar</option>
+          <option value="BRL">BRL — Brazilian Real</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="form-divider" data-label="Project Details"></div>
+
+    <div class="form-grid">
+      <!-- Description -->
+      <div class="field span2">
+        <label>Project Description</label>
+        <textarea id="proj-desc" placeholder="Describe the project in detail — scope, key requirements, site conditions, employer's objectives, any special requirements or constraints..."></textarea>
+      </div>
+
+      <!-- Employer -->
+      <div class="field">
+        <label>Employer / Client Name</label>
+        <input type="text" id="employer" placeholder="e.g. ABC Properties Ltd / Government of Kenya"/>
+      </div>
+
+      <!-- Budget -->
+      <div class="field">
+        <label>Approximate Budget (Optional)</label>
+        <input type="text" id="budget" placeholder="e.g. KES 250,000,000 / USD 2M"/>
+      </div>
+
+      <!-- Duration -->
+      <div class="field">
+        <label>Contract Period</label>
+        <input type="text" id="duration" placeholder="e.g. 18 months / 52 weeks"/>
+      </div>
+
+      <!-- Submission Deadline -->
+      <div class="field">
+        <label>Tender Submission Deadline</label>
+        <input type="text" id="deadline" placeholder="e.g. 30 April 2025, 12:00 noon"/>
+      </div>
+    </div>
+
+    <div class="form-divider" data-label="Procurement Standard"></div>
+
+    <!-- Procurement Standard -->
+    <span class="chips-label">Applicable Procurement / Contract Standard</span>
+    <div class="chips" id="standard-chips">
+      <div class="chip active" data-val="Local / General Conditions of Contract" onclick="selectChip(this,'standard-chips',false)">Local / GCC</div>
+      <div class="chip" data-val="FIDIC (Red Book — Construction)" onclick="selectChip(this,'standard-chips',false)">FIDIC Red Book</div>
+      <div class="chip" data-val="FIDIC (Yellow Book — Design-Build)" onclick="selectChip(this,'standard-chips',false)">FIDIC Yellow</div>
+      <div class="chip" data-val="NEC4 Engineering & Construction Contract" onclick="selectChip(this,'standard-chips',false)">NEC4</div>
+      <div class="chip" data-val="JCT Standard Building Contract" onclick="selectChip(this,'standard-chips',false)">JCT</div>
+      <div class="chip" data-val="World Bank Procurement Framework" onclick="selectChip(this,'standard-chips',false)">World Bank</div>
+      <div class="chip" data-val="African Development Bank Procurement Rules" onclick="selectChip(this,'standard-chips',false)">AfDB</div>
+      <div class="chip" data-val="Public Procurement (PPRA / PPADB)" onclick="selectChip(this,'standard-chips',false)">PPRA / Public</div>
+    </div>
+
+    <div class="form-divider" data-label="Sections to Include"></div>
+
+    <!-- Free trial notice -->
+    <div id="free-trial-badge" class="free-trial-notice">
+      <span class="ftn-icon">⚡</span>
+      <div class="ftn-text">
+        <strong>Free Trial — 3 sections max per tender.</strong>
+        Select up to 3 sections below. <span class="ftn-upgrade" onclick="openPaywall()">Upgrade to unlock all 9 sections →</span>
+      </div>
+    </div>
+
+    <!-- Sections -->
+    <div class="sections-grid" id="sections-grid">
+      <div class="section-check active" onclick="toggleSection(this)" data-val="Scope of Work">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Scope of Work</div><div class="sc-sub">Detailed work description & deliverables</div></div>
+      </div>
+      <div class="section-check active" onclick="toggleSection(this)" data-val="Bill of Quantities Template">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Bill of Quantities</div><div class="sc-sub">Itemised BOQ with trade sections</div></div>
+      </div>
+      <div class="section-check active" onclick="toggleSection(this)" data-val="Contract Conditions">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Contract Conditions</div><div class="sc-sub">Key clauses, obligations & rights</div></div>
+      </div>
+      <div class="section-check" onclick="toggleSection(this)" data-val="Payment Terms & Schedule">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Payment Schedule</div><div class="sc-sub">Milestone payments & retention</div></div>
+      </div>
+      <div class="section-check" onclick="toggleSection(this)" data-val="Evaluation Criteria">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Evaluation Criteria</div><div class="sc-sub">Scoring matrix & weightings</div></div>
+      </div>
+      <div class="section-check" onclick="toggleSection(this)" data-val="Instructions to Tenderers">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Instructions to Tenderers</div><div class="sc-sub">Submission rules & requirements</div></div>
+      </div>
+      <div class="section-check" onclick="toggleSection(this)" data-val="Qualification Requirements">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Qualification Requirements</div><div class="sc-sub">Prequalification & eligibility criteria</div></div>
+      </div>
+      <div class="section-check" onclick="toggleSection(this)" data-val="Health, Safety & Environment Plan Requirements">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">HSE Requirements</div><div class="sc-sub">Safety plan & environmental obligations</div></div>
+      </div>
+      <div class="section-check" onclick="toggleSection(this)" data-val="Insurance & Bond Requirements">
+        <div class="sc-box"><span class="sc-check">✓</span></div>
+        <div><div class="sc-text">Insurance & Bonds</div><div class="sc-sub">Required cover & performance bonds</div></div>
+      </div>
+    </div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generateTender()">
+      <span>✦</span> Generate Tender Package
+    </button>
+  </div>
+
+  <!-- LOADING — live progress panel -->
+  <div class="loading" id="loading">
+    <div class="loading-header">
+      <div class="loading-doc">
+        <div class="ld-line"></div>
+        <div class="ld-line"></div>
+        <div class="ld-line"></div>
+        <div class="ld-line"></div>
+        <div class="ld-line"></div>
+      </div>
+      <div class="loading-meta">
+        <p class="loading-title">Generating Tender Package</p>
+        <p id="loading-msg">Initialising...</p>
+        <div class="loading-progress-wrap">
+          <div class="loading-progress-bar" id="progress-bar"></div>
+        </div>
+        <p class="loading-pct" id="progress-pct">0%</p>
+      </div>
+    </div>
+    <div class="section-progress" id="section-progress"></div>
+  </div>
+
+  <!-- RESULTS — sections stream in live -->
+  <div id="results">
+    <div class="results-hdr">
+      <h2 id="results-title">Tender Package</h2>
+      <span class="gen-badge">✦ AI Generated</span>
+    </div>
+    <div class="quality-banner" id="quality-banner" style="display:none">
+      <span class="qb-icon">📄</span>
+      <div>
+        <div class="qb-title">Professional-Grade Document</div>
+        <div class="qb-sub">Each section generated with full depth — ready to review, customise and issue.</div>
+      </div>
+    </div>
+
+    <div class="meta-strip" id="meta-strip"></div>
+
+    <div class="expand-all-bar">
+      <span>Document Sections</span>
+      <button class="expand-all-btn" id="expand-all-btn" onclick="toggleAllSections()">Expand All</button>
+    </div>
+
+    <div id="sections-output"></div>
+
+    <div class="actions-bar">
+      <button class="act-btn act-primary" onclick="printTender()">⎙ Print / Save PDF</button>
+      <button class="act-btn act-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ New Tender</button>
+    </div>
+  </div>
+
+  <footer>
+    TenderAI by Evans Engineering & Construction<br/>
+    AI-generated documents are indicative only — review with your legal and procurement advisors before issuing<br/>
+    Benchmarked against FIDIC, NEC, JCT, World Bank and regional procurement standards
+  </footer>
+</div>
+
+<!-- PAYWALL MODAL -->
+<div class="modal-overlay" id="paywall-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePaywall()">✕</button>
+    <h2>Get More Tenders</h2>
+    <p class="modal-sub">You've used your <strong>2 free tenders</strong> (limited to 3 sections each). Unlock full 9-section professional tender packages — each one replacing a <strong>$500–$3,000 consultant fee</strong>.</p>
+    <div class="bundles">
+      <div class="bundle" data-tokens="5" data-price="12.00" data-label="Starter" onclick="selectBundle(this)">
+        <div class="b-name">Starter</div>
+        <div class="b-tokens">5</div>
+        <div class="b-unit">full tenders</div>
+        <div class="b-price">$12.00</div>
+        <div class="b-per">$2.40 each · all sections</div>
+      </div>
+      <div class="bundle selected" data-tokens="15" data-price="29.00" data-label="Pro" onclick="selectBundle(this)">
+        <div class="b-badge">Best Value</div>
+        <div class="b-name">Pro</div>
+        <div class="b-tokens">15</div>
+        <div class="b-unit">full tenders</div>
+        <div class="b-price">$29.00</div>
+        <div class="b-per">$1.93 each · all sections</div>
+      </div>
+      <div class="bundle" data-tokens="40" data-price="59.00" data-label="Studio" onclick="selectBundle(this)">
+        <div class="b-name">Studio</div>
+        <div class="b-tokens">40</div>
+        <div class="b-unit">full tenders</div>
+        <div class="b-price">$59.00</div>
+        <div class="b-per">$1.48 each · all sections</div>
+      </div>
+    </div>
+    <button class="pay-btn" onclick="goToPayPal()">
+      🛒 Buy Now · <span id="paypal-amount">$29.00</span>
+    </button>
+    <div class="di-cards">
+      <div class="di-card"><span class="di-icon">⚡</span><div><div class="di-title">Instant Delivery</div><div class="di-desc">License key emailed automatically after payment — no waiting.</div></div></div>
+      <div class="di-card"><span class="di-icon">🔑</span><div><div class="di-title">How to Redeem</div><div class="di-desc">Copy your Gumroad license key and paste it in the box below.</div></div></div>
+      <div class="di-card"><span class="di-icon">🔒</span><div><div class="di-title">Secure Checkout</div><div class="di-desc">Powered by Gumroad — PayPal & all major cards accepted worldwide.</div></div></div>
+    </div>
+    <div class="redeem-sec">
+      <p>Already purchased? Enter your Gumroad license key:</p>
+      <div class="redeem-row">
+        <input type="text" id="redeem-input" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" maxlength="40"/>
+        <button class="redeem-btn" onclick="redeemCode()">Redeem</button>
+      </div>
+      <div class="redeem-msg" id="redeem-msg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── API KEY — injected by GitHub Actions ──────────────────────────────────
+const ANTHROPIC_API_KEY = atob('ANTHROPIC_KEY_PLACEHOLDER');
+
+// ── TOKEN SYSTEM ─────────────────────────────────────────────────────────
+const FREE_SECTION_LIMIT = 3;   // Free trial: max 3 sections per tender
+const PAID_SECTION_LIMIT = 9;   // Paid: all sections unlocked
+
+function getTokens(){ return parseInt(localStorage.getItem('td_tokens') ?? '2'); }
+function setTokens(n){ localStorage.setItem('td_tokens', n); updateTokenDisplay(); }
+function useToken(){ const t=getTokens(); if(t<=0)return false; setTokens(t-1); return true; }
+function isPaidUser(){ return parseInt(localStorage.getItem('td_total_purchased') ?? '0') > 0; }
+function getSectionLimit(){ return isPaidUser() ? PAID_SECTION_LIMIT : FREE_SECTION_LIMIT; }
+
+function updateTokenDisplay(){
+  const t=getTokens(), el=document.getElementById('token-display');
+  el.textContent=t;
+  el.style.color = t===0 ? '#e85d26' : '#e8b04a';
+  // Update free trial badge
+  const badge = document.getElementById('free-trial-badge');
+  if(badge) badge.style.display = isPaidUser() ? 'none' : 'flex';
+  // Update token unit label
+  const unitLabel = document.getElementById('token-unit-label');
+  if(unitLabel) unitLabel.textContent = isPaidUser() ? 'left · all sections' : 'left (3 sections each)';
+}
+
+// ── PAYWALL ───────────────────────────────────────────────────────────────
+let selBundle = { tokens:15, price:'29.00', label:'Pro' };
+function openPaywall(){
+  document.getElementById('paywall-modal').classList.add('show');
+  document.body.style.overflow='hidden';
+  document.body.style.position='fixed';
+  document.body.style.width='100%';
+}
+function closePaywall(){
+  document.getElementById('paywall-modal').classList.remove('show');
+  document.body.style.overflow='';
+  document.body.style.position='';
+  document.body.style.width='';
+}
+function selectBundle(el){
+  document.querySelectorAll('.bundle').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  selBundle = { tokens:parseInt(el.dataset.tokens), price:el.dataset.price, label:el.dataset.label };
+  document.getElementById('paypal-amount').textContent='$'+el.dataset.price;
+}
+function goToPayPal(){
+  // ── UPDATE THESE WITH YOUR TENDER GUMROAD PRODUCT LINKS ──
+  const links = {
+    'Starter':'https://maingiverse.gumroad.com/l/kqbxsl',
+    'Pro':    'https://maingiverse.gumroad.com/l/sqotnj',
+    'Studio': 'https://maingiverse.gumroad.com/l/urutpg'
+  };
+  window.open(links[selBundle.label] || links['Pro'], '_blank');
+  document.getElementById('redeem-msg').innerHTML =
+    '<span style="color:#c9933a">✓ Complete payment on Gumroad — your license key will be emailed instantly. Paste it above to activate.</span>';
+}
+
+// ── GUMROAD PRODUCT IDs — UPDATE WITH YOUR TENDER PRODUCT IDs ────────────
+const GUMROAD_PRODUCTS = {
+  "Bxim-c6nKI6AcrSuNs6bnw==": 5,   // Starter — 5 tenders
+  "rsyXXOWIWbM0VkrKHvM8mQ==": 15,  // Pro     — 15 tenders
+  "ClEPJQC6EyjZnZVAZGqHbA==": 40,  // Studio  — 40 tenders
+};
+async function redeemCode(){
+  const key=document.getElementById('redeem-input').value.trim();
+  const msgEl=document.getElementById('redeem-msg');
+  if(!key){ msgEl.innerHTML='<span style="color:#e85d26">Please enter your license key.</span>'; return; }
+  const used=JSON.parse(localStorage.getItem('td_used_keys')||'[]');
+  if(used.includes(key.toUpperCase())){ msgEl.innerHTML='<span style="color:#e85d26">⚠ Key already redeemed.</span>'; return; }
+  msgEl.innerHTML='<span style="color:#c9933a">⏳ Verifying...</span>';
+  document.querySelector('.redeem-btn').disabled=true;
+  let verified=false, tokensToAdd=0, prodName='';
+  for(const [pid,tokens] of Object.entries(GUMROAD_PRODUCTS)){
+    try{
+      const r=await fetch('https://api.gumroad.com/v2/licenses/verify',{
+        method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({product_id:pid,license_key:key,increment_uses_count:'true'})
+      });
+      const d=await r.json();
+      if(d.success && d.purchase){
+        if(d.uses>1){ msgEl.innerHTML='<span style="color:#e85d26">⚠ Key already used.</span>'; document.querySelector('.redeem-btn').disabled=false; return; }
+        verified=true; tokensToAdd=tokens;
+        prodName=tokens===5?'Starter (5 tenders)':tokens===15?'Pro (15 tenders)':'Studio (40 tenders)';
+        break;
+      }
+    }catch(e){}
+  }
+  document.querySelector('.redeem-btn').disabled=false;
+  if(!verified){ msgEl.innerHTML='<span style="color:#e85d26">⚠ Key not found. Check your Gumroad email.</span>'; return; }
+  const newTotal=getTokens()+tokensToAdd;
+  setTokens(newTotal);
+  // Mark as paid user — unlocks all sections
+  const prevPurchased = parseInt(localStorage.getItem('td_total_purchased') ?? '0');
+  localStorage.setItem('td_total_purchased', prevPurchased + tokensToAdd);
+  used.push(key.toUpperCase());
+  localStorage.setItem('td_used_keys',JSON.stringify(used));
+  document.getElementById('redeem-input').value='';
+  msgEl.innerHTML='<span style="color:#3d5a47">✓ ' + prodName + ' activated! ' + tokensToAdd + ' full tenders added. All 9 sections unlocked. You now have ' + newTotal + ' remaining.</span>';
+  setTimeout(()=>closePaywall(),2500);
+}
+
+// ── CHIPS ─────────────────────────────────────────────────────────────────
+function selectChip(chip, groupId, multi){
+  if(!multi){
+    document.getElementById(groupId).querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+  } else { chip.classList.toggle('active'); }
+}
+
+// ── SECTION TOGGLES ───────────────────────────────────────────────────────
+function toggleSection(el){
+  const isCurrentlyActive = el.classList.contains('active');
+
+  // Always allow DEselecting — user should be free to remove sections
+  if(isCurrentlyActive){
+    el.classList.remove('active');
+    updateSectionCounter();
+    return;
+  }
+
+  // Trying to ADD a section — check limit for free users
+  const limit = getSectionLimit();
+  const currentActive = document.querySelectorAll('#sections-grid .section-check.active').length;
+  if(!isPaidUser() && currentActive >= limit){
+    openPaywall();
+    return;
+  }
+
+  el.classList.add('active');
+  updateSectionCounter();
+}
+
+function updateSectionCounter(){
+  const limit = getSectionLimit();
+  const selected = document.querySelectorAll('#sections-grid .section-check.active').length;
+  const badge = document.getElementById('free-trial-badge');
+  if(badge && !isPaidUser()){
+    const ftnText = badge.querySelector('.ftn-text');
+    if(ftnText){
+      const remaining = Math.max(0, limit - selected);
+      ftnText.innerHTML = '<strong>Free Trial — ' + selected + '/' + limit + ' sections selected.</strong>'
+        + (remaining > 0
+          ? ' Select ' + remaining + ' more section' + (remaining !== 1 ? 's' : '') + ' to fill your free allowance.'
+          : ' Section limit reached. <span class="ftn-upgrade" onclick="openPaywall()">Upgrade to unlock all 9 →</span>')
+    }
+  }
+}
+function getSelectedSections(){
+  return [...document.querySelectorAll('#sections-grid .section-check.active')].map(el=>el.dataset.val);
+}
+
+// ── RESULTS EXPAND/COLLAPSE ───────────────────────────────────────────────
+function toggleDocSection(el){
+  el.closest('.doc-section-wrap').classList.toggle('open');
+  updateExpandBtn();
+}
+function toggleAllSections(){
+  const groups=document.querySelectorAll('.doc-section-wrap');
+  const anyOpen=[...groups].some(g=>g.classList.contains('open'));
+  groups.forEach(g=>anyOpen?g.classList.remove('open'):g.classList.add('open'));
+  updateExpandBtn();
+}
+function updateExpandBtn(){
+  const btn=document.getElementById('expand-all-btn');
+  if(!btn) return;
+  const anyOpen=[...document.querySelectorAll('.doc-section-wrap')].some(g=>g.classList.contains('open'));
+  btn.textContent=anyOpen?'Collapse All':'Expand All';
+}
+
+// ── PRINT ─────────────────────────────────────────────────────────────────
+function printTender(){
+  // Open all sections before printing
+  document.querySelectorAll('.doc-section-wrap').forEach(g=>g.classList.add('open'));
+  window.print();
+}
+
+// ── CORE API CALL ────────────────────────────────────────────────────────
+async function callAPI(prompt, maxTokens){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: maxTokens || 4096,
+      messages: [{role:"user", content:prompt}]
+    })
+  });
+  const data = await res.json();
+  if(data.error) throw new Error('API Error: ' + data.error.type + ' — ' + data.error.message);
+  if(!data.content || !data.content.length) throw new Error('Empty API response. Status: ' + res.status);
+  return data.content.map(i=>i.text||'').join('');
+}
+
+function extractJSON(text){
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if(start === -1 || end === -1) throw new Error('No JSON in response');
+  return JSON.parse(text.substring(start, end+1));
+}
+
+// ── SECTION-SPECIFIC PROMPTS ──────────────────────────────────────────────
+function getSectionPrompt(sectionName, sectionNum, totalSections, projectContext, region, type, currency, standard, employer, budget, duration, deadline){
+  const ctx = projectContext;
+  const base = 'You are a senior construction procurement specialist and contract lawyer with 20+ years experience in '
+    + region + '. Generate SECTION ' + sectionNum + ' of ' + totalSections + ' of a formal tender document. '
+    + 'Context: ' + ctx + '. Standard: ' + standard + '. '
+    + 'CRITICAL: This must be a COMPLETE, PROFESSIONAL, READY-TO-ISSUE section — NOT a summary or outline. '
+    + 'Write exactly as it would appear in the final signed tender document. '
+    + 'Use proper legal language specific to ' + region + '. '
+    + 'Include specific clause numbers, cross-references, regulatory body names, local law references. '
+    + 'Use <h3> tags for sub-headings, <ol>/<ul> for lists, <table> tags for any tables. '
+    + 'Minimum 600 words. No placeholder text. No instructions to fill in later. '
+    + 'Respond with ONLY the HTML content — no JSON, no explanation, just the formatted HTML content of this section.\n\n';
+
+  const prompts = {
+    'Scope of Work': base
+      + 'Write a comprehensive SCOPE OF WORK section. Include: '
+      + '(1) Project Background & Objectives — employer context, project rationale, site location, existing conditions; '
+      + '(2) Description of Works — detailed breakdown of all construction activities, trade packages, key elements; '
+      + '(3) Works Excluded from Contract — clear exclusions; '
+      + '(4) Employer-Supplied Items — materials/services provided by employer if any; '
+      + '(5) Contractor Obligations — specific obligations, coordination requirements, quality standards; '
+      + '(6) Drawings & Specifications — reference to design documents; '
+      + '(7) Programme & Sequencing — key milestones, phasing if required; '
+      + '(8) Completion & Handover Requirements. '
+      + 'Be highly specific to ' + type + ' in ' + region + '.',
+
+    'Bill of Quantities Template': base
+      + 'Write a complete BILL OF QUANTITIES (BOQ) section. Include: '
+      + '(1) Preamble — measurement rules, pricing instructions, how to complete the BOQ; '
+      + '(2) Preliminaries & General Items table — mobilisation, site establishment, site management, insurance, bonds, P&G; '
+      + '(3) Main Trade Sections as HTML tables — each table must have columns: Item No. | Description | Unit | Qty | Rate (' + currency + ') | Amount (' + currency + '). '
+      + 'Include minimum 6 realistic trade sections appropriate for ' + type + ': e.g. Substructure, Structural Frame, Roofing, External Walls & Facades, Internal Finishes, M&E/MEP, External Works. '
+      + 'Each section must have 6-10 realistic line items with realistic quantities and units. '
+      + '(4) Summary of BOQ table showing each section subtotal and grand total row. '
+      + 'Leave Rate and Amount columns blank (for tenderer to complete). Use realistic quantities for ' + type + ' in ' + region + '.',
+
+    'Contract Conditions': base
+      + 'Write GENERAL AND SPECIAL CONDITIONS OF CONTRACT. Reference and apply ' + standard + ' correctly. Include: '
+      + '(1) Definitions & Interpretation — define all key terms; '
+      + '(2) Scope & Duration of Contract — contract period, commencement date provisions; '
+      + '(3) Contractor Obligations & Responsibilities; '
+      + '(4) Employer Obligations & Responsibilities; '
+      + '(5) Design Responsibilities — who is responsible for design; '
+      + '(6) Subcontracting — requirements for subcontractor approval; '
+      + '(7) Variations & Change Orders — procedure, valuation method; '
+      + '(8) Extensions of Time — grounds, procedure, notice requirements; '
+      + '(9) Liquidated Damages — rate per day/week for delay; '
+      + '(10) Defects Liability Period — duration, obligations; '
+      + '(11) Termination — grounds for termination by either party; '
+      + '(12) Dispute Resolution — applicable to ' + region + '; '
+      + '(13) Governing Law — law of ' + region + '. '
+      + 'Use proper clause numbering (e.g. Clause 1.1, 1.2, etc.).',
+
+    'Payment Terms & Schedule': base
+      + 'Write a complete PAYMENT TERMS AND SCHEDULE section. Include: '
+      + '(1) Contract Sum — lump sum or re-measurable, currency ' + currency + '; '
+      + '(2) Advance Payment — percentage, conditions, advance payment bond requirements; '
+      + '(3) Interim Payment Certificates — frequency (monthly), submission requirements, assessment period, payment period; '
+      + '(4) Retention — percentage (typically 5-10%), release conditions, moiety on practical completion; '
+      + '(5) Payment Milestone Schedule — HTML table with: Milestone | Description | % of Contract Sum | Amount (' + currency + ') | Due Date/Trigger. '
+      + 'Include 8-12 realistic milestones from mobilisation to final completion for ' + type + '; '
+      + '(6) Final Account — procedure, submission deadline, agreement period; '
+      + '(7) Late Payment — interest provisions; '
+      + '(8) Payment in Foreign Currency — if applicable; '
+      + '(9) Taxes & Withholding — applicable taxes in ' + region + '. '
+      + 'Reference applicable payment legislation in ' + region + '.',
+
+    'Evaluation Criteria': base
+      + 'Write a detailed TENDER EVALUATION CRITERIA section. Include: '
+      + '(1) Evaluation Process Overview — two-stage or single-stage, evaluation committee; '
+      + '(2) Mandatory/Pass-Fail Criteria — list of compliance requirements that must be met before scoring; '
+      + '(3) Technical Evaluation Scoring Matrix — comprehensive HTML table with: Criterion | Sub-Criterion | Max Score | Scoring Guide. '
+      + 'Include: Technical Capacity (30pts), Key Personnel & CVs (20pts), Similar Projects Experience (25pts), Construction Methodology & Programme (15pts), Quality Management (10pts). '
+      + 'Provide detailed scoring descriptors for each level (0, partial, full marks); '
+      + '(4) Financial Evaluation — price scoring formula, price reasonableness assessment; '
+      + '(5) Combined Score Calculation — technical vs financial weighting (e.g. 70/30); '
+      + '(6) Post-Qualification — financial standing, site visit, reference checks; '
+      + '(7) Award Criteria — basis for award recommendation. '
+      + 'Ensure criteria are appropriate for ' + type + ' in ' + region + '.',
+
+    'Instructions to Tenderers': base
+      + 'Write complete INSTRUCTIONS TO TENDERERS (ITT). Include: '
+      + '(1) Introduction — project overview, employer details, purpose of ITT; '
+      + '(2) Documents Comprising the Tender — full list of tender documents; '
+      + '(3) Clarification Requests — procedure, deadline, how responses will be issued; '
+      + '(4) Site Visit — date, time, venue, whether mandatory; '
+      + '(5) Preparation of Tender — language, currency (' + currency + '), signing requirements; '
+      + '(6) Tender Validity Period — minimum period tenders must remain valid; '
+      + '(7) Tender Security/Bid Bond — amount, form, validity, bank requirements for ' + region + '; '
+      + '(8) Submission Requirements — what to submit, format (sealed envelopes/electronic), number of copies; '
+      + '(9) Submission Address & Deadline — exact address, date and time (' + (deadline or 'as notified') + '); '
+      + '(10) Late Tenders — policy on rejection; '
+      + '(11) Tender Opening — procedure, whether public opening; '
+      + '(12) Employer Rights — right to reject, accept, negotiate, cancel. '
+      + 'Reference applicable procurement regulations in ' + region + '.',
+
+    'Qualification Requirements': base
+      + 'Write detailed QUALIFICATION AND PREQUALIFICATION REQUIREMENTS. Include: '
+      + '(1) Eligible Tenderers — eligibility criteria, exclusions; '
+      + '(2) Legal & Registration Requirements — company registration, tax compliance, licences required in ' + region + '; '
+      + '(3) Financial Capacity — minimum annual turnover requirement, audited accounts, bank reference; '
+      + '(4) Technical Capacity — minimum number of similar projects completed, minimum contract value of comparable projects; '
+      + '(5) Similar Experience Requirements — HTML table: Project | Client | Value | Duration | Role | Completion Date. '
+      + 'Specify minimum 3 similar projects in last 5-7 years appropriate for ' + type + '; '
+      + '(6) Key Personnel Requirements — table of required staff: Role | Qualification | Min Experience | Responsibilities. '
+      + 'Include: Project Manager, Site Manager/Agent, QS, HSE Officer, relevant engineers; '
+      + '(7) Plant & Equipment — minimum required equipment list; '
+      + '(8) Quality Management — ISO certification or equivalent; '
+      + '(9) Health & Safety Record — incident rates, certifications; '
+      + '(10) Documents to Submit — complete checklist of qualification documents required.',
+
+    'Health, Safety & Environment Plan Requirements': base
+      + 'Write a comprehensive HSE REQUIREMENTS section. Reference applicable legislation in ' + region + '. Include: '
+      + '(1) Legal Framework — applicable occupational health & safety laws in ' + region + '; '
+      + '(2) HSE Management Plan — what must be submitted with tender, contents required; '
+      + '(3) HSE Performance Record — incident rates, reportable incidents, LTIFR requirements; '
+      + '(4) Key HSE Personnel — requirements for HSE officer, qualifications, ratio to workforce; '
+      + '(5) Risk Assessment Requirements — methodology, who must prepare, when to submit; '
+      + '(6) Site Safety Rules — non-negotiable site rules, PPE requirements; '
+      + '(7) Environmental Management — waste management, dust, noise, water, protected areas; '
+      + '(8) Emergency Response Plan — requirements, drills, emergency contacts; '
+      + '(9) Accident Reporting — procedure, timelines, regulatory reporting obligations in ' + region + '; '
+      + '(10) HSE Incentives & Penalties — bonus/deduction provisions for HSE performance.',
+
+    'Insurance & Bond Requirements': base
+      + 'Write complete INSURANCE AND PERFORMANCE BOND REQUIREMENTS. Reference insurance law in ' + region + '. Include: '
+      + '(1) Performance Bond — amount (typically 10% of contract sum in ' + currency + '), form, issuing bank requirements, validity period; '
+      + '(2) Advance Payment Guarantee — if advance payment applies, same value as advance; '
+      + '(3) All-Risk Contractors Insurance — minimum cover, what it must cover, policy requirements; '
+      + '(4) Public Liability Insurance — minimum indemnity limit in ' + currency + ', per occurrence and aggregate; '
+      + '(5) Professional Indemnity — if design responsibility applies; '
+      + '(6) Employers Liability / Workmen's Compensation — as required by law in ' + region + '; '
+      + '(7) Motor Vehicle Insurance — third party and comprehensive for all site vehicles; '
+      + '(8) Insurance Summary Table — HTML table: Insurance Type | Minimum Cover (' + currency + ') | Policy Term | Notes; '
+      + '(9) Insurance Provider Requirements — approved insurers, Lloyd's acceptance; '
+      + '(10) Evidence of Insurance — when to submit, certificates of currency, endorsements required.'
+  };
+
+  // Default prompt for any section not specifically listed
+  return prompts[sectionName] || (base
+    + 'Write a comprehensive ' + sectionName.toUpperCase() + ' section for this tender document. '
+    + 'Include all standard professional content for this section type, '
+    + 'specific to ' + type + ' in ' + region + ' under ' + standard + '. '
+    + 'Include sub-sections with headings, numbered clauses, and tables where appropriate. '
+    + 'Write minimum 600 words of professional, ready-to-issue content.');
+}
+
+// ── MAIN GENERATE ─────────────────────────────────────────────────────────
+async function generateTender(){
+  if(getTokens()<=0){ openPaywall(); return; }
+
+  const title    = document.getElementById('proj-title').value.trim();
+  const type     = document.getElementById('proj-type').value;
+  const contract = document.getElementById('contract-type').value;
+  const region   = document.getElementById('region').value;
+  const currency = document.getElementById('currency').value;
+  const desc     = document.getElementById('proj-desc').value.trim();
+  const employer = document.getElementById('employer').value.trim();
+  const budget   = document.getElementById('budget').value.trim();
+  const duration = document.getElementById('duration').value.trim();
+  const deadline = document.getElementById('deadline').value.trim();
+  const standard = document.querySelector('#standard-chips .chip.active')?.dataset.val || 'Local / General Conditions of Contract';
+  const sections = getSelectedSections();
+
+  if(!type){ alert('Please select a project type.'); return; }
+  if(!region){ alert('Please select a region/country.'); return; }
+  if(!desc){ alert('Please describe the project.'); return; }
+  if(sections.length===0){ alert('Please select at least one document section.'); return; }
+
+  // Enforce section limit for free trial users
+  const sectionLimit = getSectionLimit();
+  let sectionsToGenerate = sections;
+  if(!isPaidUser() && sections.length > sectionLimit){
+    const proceed = confirm(
+      '⚠️ Free Trial Limit\n\n'
+      + 'You have selected ' + sections.length + ' sections.\n'
+      + 'Free trial is limited to ' + sectionLimit + ' sections per tender.\n\n'
+      + 'Only the first ' + sectionLimit + ' selected sections will be generated.\n\n'
+      + 'Upgrade to unlock all 9 sections in one tender.\n\n'
+      + 'Continue with ' + sectionLimit + ' sections?'
+    );
+    if(!proceed) return;
+    sectionsToGenerate = sections.slice(0, sectionLimit);
+  }
+  const finalSections = sectionsToGenerate;
+
+  if(!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 'ANTHROPIC_KEY_PLACEHOLDER' || ANTHROPIC_API_KEY.length < 10){
+    alert('⚠️ API key not configured. Check GitHub Actions secrets.');
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('loading').classList.add('show');
+
+  const projectContext = (title || 'Construction Project')
+    + ' | ' + type + ' | ' + (contract || 'Lump Sum Fixed Price')
+    + ' | ' + region + ' | ' + currency
+    + ' | Employer: ' + (employer || 'The Employer')
+    + ' | Budget: ' + (budget || 'As per BOQ')
+    + ' | Period: ' + (duration || 'As specified')
+    + ' | Description: ' + desc;
+
+  const msgEl = document.getElementById('loading-msg');
+  const progressBar = document.getElementById('progress-bar');
+  const progressPct = document.getElementById('progress-pct');
+  const sectionProgressEl = document.getElementById('section-progress');
+
+  // Initialise progress tracker UI
+  const sectionIcons = {
+    'Scope of Work': '📋',
+    'Bill of Quantities Template': '📊',
+    'Contract Conditions': '⚖️',
+    'Payment Terms & Schedule': '💰',
+    'Evaluation Criteria': '🏆',
+    'Instructions to Tenderers': '📬',
+    'Qualification Requirements': '✅',
+    'Health, Safety & Environment Plan Requirements': '🦺',
+    'Insurance & Bond Requirements': '🔒'
+  };
+
+  sectionProgressEl.innerHTML = finalSections.map((s, i) =>
+    '<div class="sp-item" id="sp-' + i + '">'
+    + '<span class="sp-icon">' + (sectionIcons[s] || '📄') + '</span>'
+    + '<span class="sp-name">' + s + '</span>'
+    + '<span class="sp-status" id="sp-status-' + i + '">Queued</span>'
+    + '</div>'
+  ).join('');
+
+  function setProgress(done, total){
+    const pct = Math.round((done / total) * 100);
+    progressBar.style.width = pct + '%';
+    progressPct.textContent = pct + '%';
+  }
+
+  function setSectionStatus(i, status){
+    const item = document.getElementById('sp-' + i);
+    const statusEl = document.getElementById('sp-status-' + i);
+    if(!item || !statusEl) return;
+    item.className = 'sp-item' + (status === 'generating' ? ' active' : status === 'done' ? ' done' : '');
+    statusEl.className = 'sp-status' + (status === 'generating' ? ' active-status' : status === 'done' ? ' done-status' : '');
+    statusEl.textContent = status === 'generating' ? '⟳ Writing...' : status === 'done' ? '✓ Done' : 'Queued';
+  }
+
+  // ── Step 1: Generate document metadata ─────────────────────────────────
+  msgEl.textContent = 'Preparing document metadata...';
+  setProgress(0, (sectionsToGenerate || sections).length + 1);
+
+  let meta = {};
+  try{
+    const metaPrompt = 'Generate metadata for a formal tender document. '
+      + 'Context: ' + projectContext + '. Standard: ' + standard + '. '
+      + 'Respond with ONLY valid JSON (no markdown): '
+      + '{"documentTitle":"<formal full title>","referenceNumber":"<e.g. EEC/TEND/2025/001>","issuingAuthority":"<employer name>","issueDate":"<formatted date>","submissionDeadline":"<deadline>","estimatedValue":"<budget in ' + currency + '>","contractPeriod":"<duration>","applicableStandard":"<standard>","specialConditions":"<2-3 key ' + region + '-specific conditions or statutory requirements>","disclaimer":"<professional disclaimer for ' + region + '>"}';
+    const metaText = await callAPI(metaPrompt, 1000);
+    meta = extractJSON(metaText);
+  }catch(e){
+    // Non-fatal — use defaults
+    meta = {
+      documentTitle: 'Tender Document — ' + (title || type),
+      referenceNumber: 'EEC/TEND/' + new Date().getFullYear() + '/001',
+      issuingAuthority: employer || 'The Employer',
+      issueDate: new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'}),
+      submissionDeadline: deadline || 'As notified',
+      estimatedValue: budget || 'As per BOQ',
+      contractPeriod: duration || 'As specified',
+      applicableStandard: standard,
+      specialConditions: 'Refer to applicable laws and regulations of ' + region + '.',
+      disclaimer: 'This document is AI-generated. Review with qualified legal and procurement advisors before issuing.'
+    };
+  }
+  setProgress(1, finalSections.length + 1);
+
+  // ── Step 2: Render the results frame immediately with metadata ──────────
+  renderMetaOnly(meta, title, finalSections);
+
+  // ── Step 3: Generate each section independently ─────────────────────────
+  const generatedSections = [];
+
+  for(let i = 0; i < finalSections.length; i++){
+    const sectionName = finalSections[i];
+    setSectionStatus(i, 'generating');
+    msgEl.textContent = 'Writing: ' + sectionName + '...';
+
+    let sectionContent = '';
+    try{
+      const prompt = getSectionPrompt(
+        sectionName, i+1, sections.length,
+        projectContext, region, type, currency, standard,
+        employer, budget, duration, deadline
+      );
+      sectionContent = await callAPI(prompt, 4096);
+
+      // Strip any accidental JSON or markdown wrapping
+      sectionContent = sectionContent
+        .replace(/^```html
+?/i, '').replace(/```$/m, '')
+        .replace(/^```
+?/, '').replace(/```$/m, '')
+        .trim();
+
+      // If response looks like raw JSON (starts with {), extract content field
+      if(sectionContent.startsWith('{')){
+        try{
+          const parsed = JSON.parse(sectionContent);
+          sectionContent = parsed.content || parsed.html || sectionContent;
+        }catch(e){ /* use as-is */ }
+      }
+
+    }catch(e){
+      console.error('Section ' + sectionName + ' failed:', e);
+      sectionContent = '<p class="important-box"><strong>Generation note</strong>This section could not be generated automatically. Please draft manually based on project requirements.</p>';
+    }
+
+    generatedSections.push({
+      number: String(i+1).padStart(2,'0'),
+      title: sectionName,
+      content: sectionContent
+    });
+
+    // Append this section to the live results immediately
+    setSectionStatus(i, 'done');
+    setProgress(i + 2, finalSections.length + 1);
+    appendSection(generatedSections[i], i === 0);
+    syncHeight();
+  }
+
+  // ── Done ────────────────────────────────────────────────────────────────
+  useToken();
+  document.getElementById('loading').classList.remove('show');
+  btn.disabled = false;
+  finaliseResults(meta, generatedSections);
+  syncHeight();
+
+  const remaining = getTokens();
+  if(remaining === 1) setTimeout(()=>{ if(confirm('⚠️ Only 1 tender left! Top up now?')) openPaywall(); }, 1500);
+  else if(remaining === 0) setTimeout(()=>openPaywall(), 2000);
+}
+
+// ── RENDER — 3 functions: metadata first, then stream sections live ────────
+
+function renderMetaOnly(meta, title, sections){
+  // Show the results panel immediately with metadata while sections generate
+  document.getElementById('results-title').textContent = meta.documentTitle || ('Tender — ' + title);
+  document.getElementById('meta-strip').innerHTML = [
+    {label:'Reference No.',     val:meta.referenceNumber   ||'—', sub:'Tender reference'},
+    {label:'Issuing Authority', val:meta.issuingAuthority  ||'—', sub:'Employer / Client'},
+    {label:'Estimated Value',   val:meta.estimatedValue    ||'—', sub:'Contract value'},
+    {label:'Contract Period',   val:meta.contractPeriod    ||'—', sub:'Completion period'},
+  ].map(m =>
+    '<div class="meta-card">'
+    + '<div class="mc-label">' + m.label + '</div>'
+    + '<div class="mc-val">' + m.val + '</div>'
+    + '<div class="mc-sub">' + m.sub + '</div>'
+    + '</div>'
+  ).join('');
+
+  // Pre-create empty section slots with loading shimmer
+  const out = document.getElementById('sections-output');
+  out.innerHTML = sections.map((s, i) =>
+    '<div class="doc-section-wrap" id="section-wrap-' + i + '">'
+    + '<div class="doc-sec-header" onclick="toggleDocSection(this)">'
+    + '<div class="doc-sec-left">'
+    + '<span class="doc-sec-num">' + String(i+1).padStart(2,'0') + '</span>'
+    + '<div><div class="doc-sec-title">' + s + '</div></div>'
+    + '</div>'
+    + '<span class="doc-sec-toggle">▼</span>'
+    + '</div>'
+    + '<div class="doc-sec-body" id="section-body-' + i + '">'
+    + '<div class="section-shimmer"><div class="sh-line"></div><div class="sh-line w80"></div><div class="sh-line w90"></div><div class="sh-line w70"></div></div>'
+    + '</div>'
+    + '</div>'
+  ).join('');
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+  syncHeight();
+}
+
+function appendSection(section, isFirst){
+  // Replace the shimmer placeholder with real content
+  const bodyEl = document.getElementById('section-body-' + (parseInt(section.number) - 1));
+  if(bodyEl){
+    bodyEl.innerHTML = section.content;
+    // Auto-open the first section
+    if(isFirst){
+      const wrap = bodyEl.closest('.doc-section-wrap');
+      if(wrap) wrap.classList.add('open');
+    }
+  }
+  updateExpandBtn();
+}
+
+function finaliseResults(meta, sections){
+  // Append special conditions section at end
+  const out = document.getElementById('sections-output');
+  if(meta.specialConditions){
+    const specialDiv = document.createElement('div');
+    specialDiv.className = 'doc-section-wrap';
+    specialDiv.innerHTML =
+      '<div class="doc-sec-header" onclick="toggleDocSection(this)">'
+      + '<div class="doc-sec-left">'
+      + '<span class="doc-sec-num">★</span>'
+      + '<div><div class="doc-sec-title">Regional Special Conditions & Notes</div></div>'
+      + '</div>'
+      + '<span class="doc-sec-toggle">▼</span>'
+      + '</div>'
+      + '<div class="doc-sec-body">'
+      + '<div class="important-box"><strong>Regional Advisory</strong>' + meta.specialConditions + '</div>'
+      + (meta.disclaimer ? '<div class="important-box"><strong>Disclaimer</strong>' + meta.disclaimer + '</div>' : '')
+      + '</div>';
+    out.appendChild(specialDiv);
+  }
+
+  // Show quality banner
+  const banner = document.getElementById('quality-banner');
+  if(banner) banner.style.display = 'flex';
+
+  updateExpandBtn();
+  syncHeight();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+function syncHeight(){
+  // Measure full content height and tell Wix to resize the iFrame to match.
+  // This eliminates the inner scrollbar completely.
+  const h = Math.max(
+    document.body.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.scrollHeight,
+    document.documentElement.offsetHeight
+  );
+  // Wix postMessage API
+  window.parent.postMessage({type:'wix-iframe-height', height:h}, '*');
+  window.parent.postMessage({height:h}, '*');
+  // Wix Embeds API
+  if(window.wixEmbedsAPI && window.wixEmbedsAPI.resizeWindow){
+    window.wixEmbedsAPI.resizeWindow({height:h});
+  }
+}
+
+window.addEventListener('load',()=>{
+  updateTokenDisplay();
+  updateSectionCounter();
+  syncHeight();
+  // Re-sync whenever DOM changes (results load, sections expand, etc.)
+  const obs = new MutationObserver(()=>{ syncHeight(); });
+  obs.observe(document.body, {childList:true, subtree:true, attributes:true});
+  window.addEventListener('resize', syncHeight);
+  // Also sync on a small delay after load to catch late-rendering fonts
+  setTimeout(syncHeight, 500);
+  setTimeout(syncHeight, 1500);
+});
+document.getElementById('paywall-modal').addEventListener('click',e=>{
+  if(e.target.id==='paywall-modal') closePaywall();
+});
+</script>
+</body>
+</html>
